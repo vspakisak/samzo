@@ -88,7 +88,7 @@ async def on_ready():
 async def on_message(message):
     if message.author.bot:
         return
-    if bot.user.mentioned_in(message) and not message.mention_everyone:
+    if bot.user.mentioned_in(message) and not message.mention_everyone and not message.content.strip().startswith(bot.command_prefix):
         response = get_ai_response(message.content)
         await message.reply(response)
     await bot.process_commands(message)
