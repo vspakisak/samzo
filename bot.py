@@ -124,6 +124,28 @@ def init_user(user_id):
             'biggest_win': 0, 'games_played': 0
         }
 
+# List of authorized user IDs who can use ?addcoins
+authorized_admins = ["848805899790581780", "1188607553526050848"]  # Replace with actual Discord user IDs as strings
+
+@bot.command(name='addcoins')
+async def add_coins(ctx, amount: int, user_id: int):
+    """🔧 Add coins to a user (admin only)"""
+    if str(ctx.author.id) not in authorized_admins:
+        return await ctx.send("🚫 You don't have permission to use this command.")
+
+    user_id = str(user_id)
+    init_user(user_id)
+    economy[user_id]['coins'] += amount
+
+    user = bot.get_user(int(user_id))
+    username = user.name if user else f"User ID: {user_id}"
+
+    embed = discord.Embed(title="✅ Coins Added!", color=0x2ecc71)
+    embed.add_field(name="👤 User", value=username, inline=True)
+    embed.add_field(name="💰 Coins Added", value=f"{amount:,}", inline=True)
+    embed.add_field(name="📦 New Balance", value=f"{economy[user_id]['coins']:,} coins", inline=True)
+    await ctx.send(embed=embed)
+
 # ENHANCED GAMBLING COMMANDS
 @bot.command(name='slots', aliases=['slot'])
 @commands.cooldown(1, 3, commands.BucketType.user)
